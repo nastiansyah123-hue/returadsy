@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Data Retur Customer</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #f5f3ef;
+    --surface: #ffffff;
+    --surface2: #eeece8;
+    --border: #dddbd6;
+    --text: #1a1917;
+    --text2: #6b6960;
+    --text3: #9c9a93;
+    --accent: #c84b2f;
+    --accent-light: #fdf0ed;
+    --accent-mid: #f4c4b8;
+    --green: #2d6a4f;
+    --green-light: #e8f5ee;
+    --amber: #92400e;
+    --amber-light: #fef3c7;
+    --red: #991b1b;
+    --red-light: #fee2e2;
+    --radius: 10px;
+    --radius-sm: 6px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Sora', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* Header */
+  .top-bar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .top-bar .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .top-bar .logo-dot {
+    width: 28px; height: 28px;
+    background: var(--accent);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'DM Mono', monospace;
+  }
+  .top-bar .date-info {
+    font-size: 12px;
+    color: var(--text3);
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* Layout */
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+  }
+
+  /* Stats */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 1.75rem;
+    animation: fadeUp 0.4s ease both;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.1rem 1.25rem;
+    box-shadow: var(--shadow);
+  }
+  .stat-card .s-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text3);
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+  .stat-card .s-value {
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    line-height: 1;
+  }
+  .stat-card.accent-card {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .stat-card.accent-card .s-label { color: rgba(255,255,255,0.7); }
+  .stat-card.accent-card .s-value { color: #fff; }
+
+  /* Input section */
+  .input-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    margin-bottom: 1.75rem;
+    box-shadow: var(--shadow);
+    animation: fadeUp 0.4s 0.1s ease both;
+  }
+  .section-label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text3);
+    margin-bottom: 1rem;
+  }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 1.1rem;
+    background: var(--surface2);
+    border-radius: var(--radius-sm);
+    padding: 3px;
+    width: fit-content;
+  }
+  .tab-btn {
+    padding: 6px 18px;
+    border: none;
+    background: transparent;
+    font-family: 'Sora', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text2);
+    cursor: pointer;
+    border-radius: calc(var(--radius-sm) - 2px);
+    transition: all 0.18s;
+  }
+  .tab-btn.active {
+    background: var(--surface);
+    color: var(--text);
+    box-shadow: var(--shadow);
+  }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* Single input */
+  .single-row {
+    display: flex;
+    gap: 8px;
+  }
+  .single-row input {
+    flex: 1;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    background: var(--bg);
+    color: var(--text);
+    transition: border-color 0.15s;
+  }
+  .single-row input:focus { outline: none; border-color: var(--accent); background: #fff; }
+  .single-row input::placeholder { color: var(--text3); }
+
+  /* Bulk input */
+  textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    background: var(--bg);
+    color: var(--text);
+    resize: vertical;
+    min-height: 120px;
+    line-height: 1.7;
+    transition: border-color 0.15s;
+  }
+  textarea:focus { outline: none; border-color: var(--accent); background: #fff; }
+  textarea::placeholder { color: var(--text3); }
+  .bulk-hint {
+    font-size: 12px;
+    color: var(--text3);
+    margin: 6px 0 10px;
+  }
+  .bulk-actions { display: flex; gap: 8px; }
+
+  /* Buttons */
+  .btn {
+    padding: 9px 20px;
+    border-radius: var(--radius-sm);
+    font-family: 'Sora', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    transition: all 0.15s;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  .btn-primary:hover { background: #b03d23; border-color: #b03d23; }
+  .btn-secondary {
+    background: transparent;
+    color: var(--text2);
+  }
+  .btn-secondary:hover { background: var(--surface2); }
+
+  /* Bulk result */
+  .bulk-result {
+    margin-top: 10px;
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    display: none;
+  }
+  .bulk-result.ok { display: block; background: var(--green-light); color: var(--green); }
+  .bulk-result.warn { display: block; background: var(--amber-light); color: var(--amber); }
+
+  /* Search & filter */
+  .toolbar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 1rem;
+    animation: fadeUp 0.4s 0.2s ease both;
+  }
+  .toolbar input {
+    flex: 1;
+    padding: 9px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: 'Sora', sans-serif;
+    font-size: 13px;
+    background: var(--surface);
+    color: var(--text);
+    transition: border-color 0.15s;
+  }
+  .toolbar input:focus { outline: none; border-color: var(--accent); }
+  .toolbar input::placeholder { color: var(--text3); }
+  .clear-btn {
+    padding: 9px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--red);
+    font-family: 'Sora', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s;
+  }
+  .clear-btn:hover { background: var(--red-light); border-color: #fca5a5; }
+
+  /* Table */
+  .table-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    animation: fadeUp 0.4s 0.25s ease both;
+  }
+  .table-header {
+    display: grid;
+    grid-template-columns: 1fr 110px 90px 60px;
+    padding: 10px 16px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--text3);
+  }
+  .table-body { max-height: 420px; overflow-y: auto; }
+  .table-row {
+    display: grid;
+    grid-template-columns: 1fr 110px 90px 60px;
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--border);
+    align-items: center;
+    font-size: 13px;
+    transition: background 0.12s;
+    animation: rowIn 0.2s ease both;
+  }
+  .table-row:last-child { border-bottom: none; }
+  .table-row:hover { background: #faf9f7; }
+  .no-customer {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    font-family: 'DM Mono', monospace;
+  }
+  .b-green { background: var(--green-light); color: var(--green); }
+  .b-amber { background: var(--amber-light); color: var(--amber); }
+  .b-red { background: var(--red-light); color: var(--red); }
+  .date-cell {
+    font-size: 12px;
+    color: var(--text3);
+    font-family: 'DM Mono', monospace;
+  }
+  .del-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text3);
+    font-size: 16px;
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    transition: all 0.15s;
+    line-height: 1;
+  }
+  .del-btn:hover { background: var(--red-light); color: var(--red); }
+  .empty-state {
+    padding: 3rem 2rem;
+    text-align: center;
+    color: var(--text3);
+  }
+  .empty-state .empty-icon {
+    font-size: 32px;
+    margin-bottom: 10px;
+    opacity: 0.5;
+  }
+  .empty-state p { font-size: 14px; }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: var(--text);
+    color: #fff;
+    padding: 9px 20px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-family: 'Sora', sans-serif;
+    z-index: 999;
+    opacity: 0;
+    transition: all 0.25s;
+    pointer-events: none;
+    white-space: nowrap;
+    box-shadow: var(--shadow-md);
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* Confirm modal */
+  .modal-bg {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(26,25,23,0.35);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-bg.open { display: flex; }
+  .modal {
+    background: var(--surface);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    width: 320px;
+    box-shadow: var(--shadow-md);
+  }
+  .modal h3 { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+  .modal p { font-size: 13px; color: var(--text2); margin-bottom: 1.25rem; }
+  .modal-btns { display: flex; gap: 8px; justify-content: flex-end; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes rowIn {
+    from { opacity: 0; transform: translateX(-6px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  /* Scrollbar */
+  .table-body::-webkit-scrollbar { width: 4px; }
+  .table-body::-webkit-scrollbar-track { background: transparent; }
+  .table-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  @media (max-width: 600px) {
+    .stats-row { grid-template-columns: 1fr 1fr; }
+    .stats-row .stat-card:last-child { grid-column: span 2; }
+    .table-header, .table-row { grid-template-columns: 1fr 80px 40px; }
+    .table-header span:nth-child(3),
+    .table-row .date-cell { display: none; }
+    .container { padding: 1rem; }
+    .top-bar { padding: 0 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="logo">
+    <div class="logo-dot">R</div>
+    Data Retur Customer
+  </div>
+  <div class="date-info" id="date-display"></div>
+</div>
+
+<div class="container">
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="s-label">Total Entri Retur</div>
+      <div class="s-value" id="stat-total">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="s-label">Customer Unik</div>
+      <div class="s-value" id="stat-unique">0</div>
+    </div>
+    <div class="stat-card accent-card">
+      <div class="s-label">Retur Berulang</div>
+      <div class="s-value" id="stat-repeat">0</div>
+    </div>
+  </div>
+
+  <div class="input-section">
+    <div class="section-label">Tambah Data Retur</div>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('single')">Satu Nomor</button>
+      <button class="tab-btn" onclick="switchTab('bulk')">Input Masal</button>
+    </div>
+
+    <div class="tab-panel active" id="panel-single">
+      <div class="single-row">
+        <input type="text" id="inp-single" placeholder="Masukkan nomor customer..." onkeydown="if(event.key==='Enter')addOne()" />
+        <button class="btn btn-primary" onclick="addOne()">+ Tambah</button>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="panel-bulk">
+      <textarea id="inp-bulk" placeholder="Masukkan banyak nomor sekaligus, satu nomor per baris:&#10;CUST-001&#10;CUST-002&#10;CUST-003&#10;..."></textarea>
+      <p class="bulk-hint">Satu nomor per baris. Duplikat dalam satu sesi akan dilewati secara otomatis.</p>
+      <div class="bulk-actions">
+        <button class="btn btn-primary" onclick="addBulk()">Simpan Semua</button>
+        <button class="btn btn-secondary" onclick="document.getElementById('inp-bulk').value='';document.getElementById('bulk-result').className='bulk-result'">Bersihkan</button>
+      </div>
+      <div class="bulk-result" id="bulk-result"></div>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <input type="text" id="search" placeholder="Cari nomor customer..." oninput="render()" />
+    <button class="clear-btn" onclick="askClearAll()">Hapus Semua</button>
+  </div>
+
+  <div class="table-section">
+    <div class="table-header">
+      <span>Nomor Customer</span>
+      <span>Tgl Ditambahkan</span>
+      <span>Retur ke-</span>
+      <span></span>
+    </div>
+    <div class="table-body" id="table-body">
+      <div class="empty-state">
+        <div class="empty-icon">📋</div>
+        <p>Belum ada data retur.<br>Tambahkan nomor customer di atas.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Modal konfirmasi hapus satu -->
+<div class="modal-bg" id="modal-del">
+  <div class="modal">
+    <h3>Hapus data ini?</h3>
+    <p>Data yang dihapus tidak bisa dikembalikan.</p>
+    <div class="modal-btns">
+      <button class="btn btn-secondary" onclick="closeModal('modal-del')">Batal</button>
+      <button class="btn btn-primary" style="background:#991b1b;border-color:#991b1b" onclick="confirmDelete()">Hapus</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal konfirmasi hapus semua -->
+<div class="modal-bg" id="modal-clear">
+  <div class="modal">
+    <h3>Hapus semua data?</h3>
+    <p>Seluruh data retur akan dihapus permanen dan tidak bisa dikembalikan.</p>
+    <div class="modal-btns">
+      <button class="btn btn-secondary" onclick="closeModal('modal-clear')">Batal</button>
+      <button class="btn btn-primary" style="background:#991b1b;border-color:#991b1b" onclick="confirmClearAll()">Hapus Semua</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const KEY = 'retur_customer_v2';
+let data = [];
+let deleteId = null;
+
+// Load from localStorage
+function load() {
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (raw) data = JSON.parse(raw);
+  } catch(e) { data = []; }
+  render();
+  updateStats();
+  document.getElementById('date-display').textContent = new Date().toLocaleDateString('id-ID', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+}
+
+function save() {
+  localStorage.setItem(KEY, JSON.stringify(data));
+}
+
+function switchTab(t) {
+  document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', (i===0&&t==='single')||(i===1&&t==='bulk')));
+  document.getElementById('panel-single').classList.toggle('active', t==='single');
+  document.getElementById('panel-bulk').classList.toggle('active', t==='bulk');
+  document.getElementById('bulk-result').className = 'bulk-result';
+}
+
+function addOne() {
+  const val = document.getElementById('inp-single').value.trim();
+  if (!val) { showToast('Masukkan nomor customer terlebih dahulu!'); return; }
+  data.unshift({ id: Date.now(), no: val, date: new Date().toLocaleDateString('id-ID') });
+  save(); render(); updateStats();
+  document.getElementById('inp-single').value = '';
+  showToast('Berhasil ditambahkan!');
+}
+
+function addBulk() {
+  const raw = document.getElementById('inp-bulk').value;
+  const lines = raw.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+  if (!lines.length) { showToast('Tidak ada nomor yang dimasukkan!'); return; }
+  const now = new Date().toLocaleDateString('id-ID');
+  const seen = new Set();
+  let added = 0, skipped = 0;
+  lines.forEach(no => {
+    if (seen.has(no)) { skipped++; return; }
+    seen.add(no);
+    data.unshift({ id: Date.now() + Math.random(), no, date: now });
+    added++;
+  });
+  save(); render(); updateStats();
+  document.getElementById('inp-bulk').value = '';
+  const el = document.getElementById('bulk-result');
+  if (skipped > 0) {
+    el.className = 'bulk-result warn';
+    el.textContent = `${added} nomor berhasil ditambahkan, ${skipped} duplikat dilewati.`;
+  } else {
+    el.className = 'bulk-result ok';
+    el.textContent = `${added} nomor berhasil ditambahkan!`;
+  }
+  showToast(`${added} nomor ditambahkan!`);
+}
+
+function countNo(no) { return data.filter(d => d.no === no).length; }
+
+function render() {
+  const q = document.getElementById('search').value.toLowerCase();
+  const filtered = data.filter(d => d.no.toLowerCase().includes(q));
+  const body = document.getElementById('table-body');
+  if (!filtered.length) {
+    body.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><p>${q ? 'Tidak ada data yang cocok dengan pencarian.' : 'Belum ada data retur.<br>Tambahkan nomor customer di atas.'}</p></div>`;
+    return;
+  }
+  body.innerHTML = filtered.map(d => {
+    const c = countNo(d.no);
+    const bc = c >= 3 ? 'b-red' : c === 2 ? 'b-amber' : 'b-green';
+    return `<div class="table-row">
+      <span class="no-customer">${d.no}</span>
+      <span class="date-cell">${d.date}</span>
+      <span><span class="badge ${bc}">${c}x</span></span>
+      <span><button class="del-btn" onclick="askDelete(${d.id})" title="Hapus">✕</button></span>
+    </div>`;
+  }).join('');
+}
+
+function updateStats() {
+  document.getElementById('stat-total').textContent = data.length;
+  const unique = new Set(data.map(d => d.no));
+  document.getElementById('stat-unique').textContent = unique.size;
+  let repeat = 0;
+  unique.forEach(no => { if (countNo(no) > 1) repeat++; });
+  document.getElementById('stat-repeat').textContent = repeat;
+}
+
+function askDelete(id) {
+  deleteId = id;
+  document.getElementById('modal-del').classList.add('open');
+}
+function confirmDelete() {
+  data = data.filter(d => d.id !== deleteId);
+  save(); render(); updateStats();
+  closeModal('modal-del');
+  showToast('Data dihapus.');
+}
+function askClearAll() {
+  if (!data.length) { showToast('Tidak ada data untuk dihapus.'); return; }
+  document.getElementById('modal-clear').classList.add('open');
+}
+function confirmClearAll() {
+  data = [];
+  save(); render(); updateStats();
+  closeModal('modal-clear');
+  showToast('Semua data telah dihapus.');
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2400);
+}
+
+load();
+</script>
+</body>
+</html>
